@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Named Real-time Chat</title>
+    <title>OSP Chat</title> 
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,9 +11,12 @@
     <div class="chat-container">
 
         <header class="chat-header">
-    <h1 class="app-title">OSPranto Tech Chat</h1> 
-    <button id="aboutBtn" class="about-button" onclick="toggleAbout()">About / Contact</button> 
-</header>
+            <h1 class="app-title">OSPranto Tech Chat</h1> 
+            <div id="header-btns"> 
+                <button id="aboutBtn" class="about-button" onclick="toggleAbout()">About</button> 
+                <button id="contactBtn" class="about-button" onclick="toggleContact()">Contact</button>
+            </div>
+        </header>
         
         <div id="room-info">
             <input type="text" id="usernameInput" placeholder="Your Name" required /> 
@@ -43,13 +46,46 @@
     <div id="aboutModal" class="modal" onclick="toggleAbout()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-button" onclick="toggleAbout()">&times;</span>
-            <h2>About This App</h2>
-            <p>This is a simple real-time chat application built with Firebase Realtime Database. Your chats are stored on the database and updated instantly for everyone in the same room. OSPranto Tech </p>
+            
+            <h3>About This Application</h3>
+            <p class="app-description">
+                Welcome to **OSPranto Tech's** Real-time Chat App. This project demonstrates a fast, room-based messaging system built using modern web technologies and Firebase Realtime Database. Connect instantly with friends and communities by simply choosing a room name.
+            </p>
+            <div class="footer-branding">
+                Powered by **OSPranto Tech**
+            </div>
+        </div>
+    </div>
+    
+    <div id="contactModal" class="modal" onclick="toggleContact()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-button" onclick="toggleContact()">&times;</span>
+            
+            <h3>Connect with Adnan Hasan Pranto</h3>
+            
+            <div class="contact-section">
+                <ul>
+                    <li>
+                        <strong>Facebook:</strong> 
+                        <a href="https://www.facebook.com/AdnanHasanPranto" target="_blank">Adnan Hasan Pranto</a>
+                    </li>
+                    <li>
+                        <strong>Email:</strong> 
+                        <a href="mailto:OSPranto.Official@gmail.com">OSPranto.Official@gmail.com</a>
+                    </li>
+                    <li>
+                        <strong>GitHub:</strong> 
+                        <a href="https://github.com/OSPrantoTech" target="_blank">OSPranto Tech</a>
+                    </li>
+                    <li>
+                        <strong>Telegram:</strong> 
+                        <a href="https://t.me/MrMysteryMoon" target="_blank">@MrMysteryMoon</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
     
     <script type="module" src="script.js"></script>
 </body>
 </html>
-
-
