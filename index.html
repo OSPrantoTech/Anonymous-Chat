@@ -16,10 +16,11 @@
                 <button class="about-btn" onclick="toggleAbout()">ℹ️ About</button>
             </div>
             
-            <div id="room-info">
-                <input type="text" id="roomInput" placeholder="Enter Room Name..." />
-                <button onclick="joinRoom()">Join</button>
-            </div>
+           <div id="room-info">
+    <input type="text" id="usernameInput" placeholder="Your Name" required /> 
+    <input type="text" id="roomInput" placeholder="Room Name (e.g. lounge)" required />
+    <button onclick="joinRoom()">Join</button>
+</div>
         </header>
 
         <div id="chat-window" class="chat-window">
@@ -52,3 +53,4 @@
 </body>
 
 </html>
+
