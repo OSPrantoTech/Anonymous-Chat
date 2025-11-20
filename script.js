@@ -1,6 +1,6 @@
-// --- script.js (চূড়ান্ত সংস্করণ) ---
+// --- script.js (চূড়ান্ত ও ফিক্সড সংস্করণ) ---
 
-// Firebase Configuration (আপনার আগের কনফিগারেশন)
+// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCz6tTqCEU2-Tm2jToKj5OACpSbonwXiE",
     authDomain: "anonymous-chat-d6512.firebaseapp.com",
@@ -12,9 +12,7 @@ const firebaseConfig = {
     measurementId: "G-05M7QCFP81"
 };
 
-// এই কোডটি HTML-এর <script src="script.js"></script> এর সাথে কাজ করবে
-
-// Initialize Firebase (Functions must be loaded globally)
+// Initialize Firebase (Uses the globally loaded Firebase object)
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const serverTimestamp = firebase.database.ServerValue.TIMESTAMP;
@@ -56,7 +54,7 @@ function formatTime(timestamp) {
 }
 
 // ----------------------------------------------------
-// CORE FUNCTIONS (Now Global due to standard <script> loading)
+// CORE FUNCTIONS (Accessed globally from HTML)
 // ----------------------------------------------------
 
 // 1. Join Room Function
@@ -74,7 +72,7 @@ window.joinRoom = function() {
     
     // UI Update 
     document.querySelector('.welcome-msg').style.display = 'none';
-    chatInterface.style.display = 'flex'; // Shows chat interface
+    chatInterface.style.display = 'flex'; 
     roomTitleDisplay.innerText = `Room: ${currentRoom}`;
 
     // Disable/Enable Inputs
@@ -149,14 +147,12 @@ function setupPresence() {
 
     const roomPresenceListRef = db.ref(`room_presence/${currentRoom}`);
     roomPresenceListRef.on('value', (snapshot) => {
-        const count = snapshot.numChildren(); // Use numChildren for simple counting
+        const count = snapshot.numChildren();
         userCountDisplay.innerText = count;
     });
 }
 
 function displayMessage(text, senderID, senderName, timestamp) {
-    // (Content remains the same)
-    // ... [Message display logic] ...
     const div = document.createElement('div');
     div.classList.add('message');
     
@@ -196,21 +192,5 @@ msgInput.addEventListener('keypress', function (e) {
     if (!msgInput.disabled && e.key === 'Enter') {
         e.preventDefault(); 
         window.sendMessage();
-    }
-});
-
-
-// ----------------------------------------------------
-// UI Fixes on Load
-// ----------------------------------------------------
-
-document.addEventListener('DOMContentLoaded', () => {
-    // FIX: Ensure both Modals are hidden on page load
-    document.getElementById('aboutModal').style.display = 'none';
-    document.getElementById('contactModal').style.display = 'none';
-    
-    // FIX: If chatInterface is accidentally visible, ensure it's hidden unless joined
-    if (chatInterface) {
-        chatInterface.style.display = 'none';
     }
 });
