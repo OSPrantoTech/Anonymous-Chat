@@ -4,7 +4,7 @@ import { getDatabase, ref, push, onChildAdded, onValue, set, onDisconnect, serve
 
 // Firebase Configuration (Using your provided config)
 const firebaseConfig = {
-    apiKey: "AIzaSyCz6tTqCEU2-Tm2jToKjJ5OACpSbonwXiE",
+    apiKey: "AIzaSyCz6tTqCEU2-Tm2jToKj5OACpSbonwXiE",
     authDomain: "anonymous-chat-d6512.firebaseapp.com",
     databaseURL: "https://anonymous-chat-d6512-default-rtdb.firebaseio.com",
     projectId: "anonymous-chat-d6512",
@@ -79,7 +79,7 @@ window.joinRoom = function() {
     msgInput.disabled = false;
     sendBtn.disabled = false;
     
-    // CORE FIX: Hide both buttons after joining
+    // Core Fix: Hide both buttons after joining
     aboutBtn.style.display = 'none';
     contactBtn.style.display = 'none'; 
 
@@ -167,7 +167,7 @@ function displayMessage(text, senderID, senderName, timestamp) {
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-// LOGIC SEPARATION FIX: Toggle About Modal
+// FIX: Toggle About Modal
 window.toggleAbout = function() {
     const modal = document.getElementById('aboutModal');
     const currentDisplay = window.getComputedStyle(modal).display;
@@ -179,7 +179,7 @@ window.toggleAbout = function() {
     }
 }
 
-// LOGIC SEPARATION FIX: Toggle Contact Modal
+// FIX: Toggle Contact Modal
 window.toggleContact = function() {
     const modal = document.getElementById('contactModal');
     const currentDisplay = window.getComputedStyle(modal).display;
@@ -190,3 +190,12 @@ window.toggleContact = function() {
         modal.style.display = "flex";
     }
 }
+
+// NEW FEATURE: Send message using Enter key
+msgInput.addEventListener('keypress', function (e) {
+    // Check if the input is enabled and the key pressed is Enter (key code 13)
+    if (!msgInput.disabled && e.key === 'Enter') {
+        e.preventDefault(); // Prevent the default action (like new line)
+        window.sendMessage();
+    }
+});
