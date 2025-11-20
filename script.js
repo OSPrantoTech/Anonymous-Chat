@@ -1,8 +1,6 @@
-// Import Firebase and required functions
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, onValue, set, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+// --- script.js (চূড়ান্ত সংস্করণ) ---
 
-// Firebase Configuration (Using your provided config)
+// Firebase Configuration (আপনার আগের কনফিগারেশন)
 const firebaseConfig = {
     apiKey: "AIzaSyCz6tTqCEU2-Tm2jToKj5OACpSbonwXiE",
     authDomain: "anonymous-chat-d6512.firebaseapp.com",
@@ -14,14 +12,13 @@ const firebaseConfig = {
     measurementId: "G-05M7QCFP81"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+// এই কোডটি HTML-এর <script src="script.js"></script> এর সাথে কাজ করবে
 
-// Global Variables
-let currentRoom = "";
-let myID = Math.random().toString(36).substr(2, 9);
-let myUsername = "";
+// Initialize Firebase (Functions must be loaded globally)
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const serverTimestamp = firebase.database.ServerValue.TIMESTAMP;
+
 
 // HTML Elements
 const usernameInput = document.getElementById('usernameInput');
@@ -34,14 +31,18 @@ const chatWindow = document.getElementById('chat-window');
 const roomTitleDisplay = document.getElementById('roomTitle');
 const userCountDisplay = document.getElementById('userCount');
 
-// NEW ELEMENTS FOR SEPARATION
 const aboutBtn = document.getElementById('aboutBtn');
 const contactBtn = document.getElementById('contactBtn');
 
 // Feature: Notification Sound
 const notificationSound = new Audio('https://www.soundjay.com/buttons/beep-07.mp3'); 
 
-// Utility Function: Format Timestamp
+// Global Variables
+let currentRoom = "";
+let myID = Math.random().toString(36).substr(2, 9);
+let myUsername = "";
+
+// Helper Function: Format Timestamp
 function formatTime(timestamp) {
     if (!timestamp) return '';
     const date = new Date(timestamp);
@@ -54,7 +55,11 @@ function formatTime(timestamp) {
     return hours + ':' + minutes + ' ' + ampm;
 }
 
-// Join Room Function
+// ----------------------------------------------------
+// CORE FUNCTIONS (Now Global due to standard <script> loading)
+// ----------------------------------------------------
+
+// 1. Join Room Function
 window.joinRoom = function() {
     const username = usernameInput.value.trim();
     const roomName = roomInput.value.trim();
@@ -69,17 +74,17 @@ window.joinRoom = function() {
     
     // UI Update 
     document.querySelector('.welcome-msg').style.display = 'none';
-    chatInterface.style.display = 'flex'; // Use flex for better mobile layout
+    chatInterface.style.display = 'flex'; // Shows chat interface
     roomTitleDisplay.innerText = `Room: ${currentRoom}`;
 
-    // Disable inputs
+    // Disable/Enable Inputs
     usernameInput.disabled = true;
     roomInput.disabled = true;
     joinBtn.disabled = true;
     msgInput.disabled = false;
     sendBtn.disabled = false;
     
-    // Core Fix: Hide both buttons after joining
+    // Fix: Hide both buttons after joining
     aboutBtn.style.display = 'none';
     contactBtn.style.display = 'none'; 
 
@@ -88,52 +93,70 @@ window.joinRoom = function() {
     setupPresence();
 };
 
-// Send Message Function
+// 2. Send Message Function
 window.sendMessage = function() {
     const msg = msgInput.value.trim();
     if (msg === "") return;
 
-    const messagesRef = ref(db, `chat_rooms/${currentRoom}`);
-    push(messagesRef, {
+    const messagesRef = db.ref(`chat_rooms/${currentRoom}`);
+    messagesRef.push({
         text: msg,
         senderID: myID,
         senderName: myUsername,
-        timestamp: serverTimestamp()
+        timestamp: serverTimestamp
     });
 
     msgInput.value = "";
 };
 
-// Message Listener (Load Messages)
+// 3. Toggle About Modal
+window.toggleAbout = function() {
+    const modal = document.getElementById('aboutModal');
+    const currentDisplay = window.getComputedStyle(modal).display;
+    modal.style.display = (currentDisplay === "flex") ? "none" : "flex";
+}
+
+// 4. Toggle Contact Modal
+window.toggleContact = function() {
+    const modal = document.getElementById('contactModal');
+    const currentDisplay = window.getComputedStyle(modal).display;
+    modal.style.display = (currentDisplay === "flex") ? "none" : "flex";
+}
+
+
+// ----------------------------------------------------
+// EVENT LISTENERS & BACKGROUND LOGIC
+// ----------------------------------------------------
+
 function loadMessages() {
-    const messagesRef = ref(db, `chat_rooms/${currentRoom}`);
+    const messagesRef = db.ref(`chat_rooms/${currentRoom}`);
     
-    onChildAdded(messagesRef, (snapshot) => {
+    messagesRef.on('child_added', (snapshot) => {
         const data = snapshot.val();
         displayMessage(data.text, data.senderID, data.senderName, data.timestamp);
     });
 }
 
-// User Counter (Presence Setup)
 function setupPresence() {
-    const roomPresenceRef = ref(db, `room_presence/${currentRoom}/${myID}`);
+    const roomPresenceRef = db.ref(`room_presence/${currentRoom}/${myID}`);
     
-    onDisconnect(roomPresenceRef).remove();
+    roomPresenceRef.onDisconnect().remove();
     
-    set(roomPresenceRef, {
+    roomPresenceRef.set({
         name: myUsername,
-        timestamp: serverTimestamp()
+        timestamp: serverTimestamp
     });
 
-    const roomPresenceListRef = ref(db, `room_presence/${currentRoom}`);
-    onValue(roomPresenceListRef, (snapshot) => {
-        const count = snapshot.exists() ? snapshot.size : 0;
+    const roomPresenceListRef = db.ref(`room_presence/${currentRoom}`);
+    roomPresenceListRef.on('value', (snapshot) => {
+        const count = snapshot.numChildren(); // Use numChildren for simple counting
         userCountDisplay.innerText = count;
     });
 }
 
-// Display Message on Screen
 function displayMessage(text, senderID, senderName, timestamp) {
+    // (Content remains the same)
+    // ... [Message display logic] ...
     const div = document.createElement('div');
     div.classList.add('message');
     
@@ -141,7 +164,7 @@ function displayMessage(text, senderID, senderName, timestamp) {
         div.classList.add('my-message');
     } else {
         div.classList.add('other-message');
-        notificationSound.play(); // Play sound for incoming messages
+        notificationSound.play(); 
     }
     
     const headerDiv = document.createElement('div');
@@ -167,35 +190,27 @@ function displayMessage(text, senderID, senderName, timestamp) {
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-// FIX: Toggle About Modal
-window.toggleAbout = function() {
-    const modal = document.getElementById('aboutModal');
-    const currentDisplay = window.getComputedStyle(modal).display;
-    
-    if (currentDisplay === "flex") {
-        modal.style.display = "none";
-    } else {
-        modal.style.display = "flex";
-    }
-}
-
-// FIX: Toggle Contact Modal
-window.toggleContact = function() {
-    const modal = document.getElementById('contactModal');
-    const currentDisplay = window.getComputedStyle(modal).display;
-    
-    if (currentDisplay === "flex") {
-        modal.style.display = "none";
-    } else {
-        modal.style.display = "flex";
-    }
-}
 
 // NEW FEATURE: Send message using Enter key
 msgInput.addEventListener('keypress', function (e) {
-    // Check if the input is enabled and the key pressed is Enter (key code 13)
     if (!msgInput.disabled && e.key === 'Enter') {
-        e.preventDefault(); // Prevent the default action (like new line)
+        e.preventDefault(); 
         window.sendMessage();
+    }
+});
+
+
+// ----------------------------------------------------
+// UI Fixes on Load
+// ----------------------------------------------------
+
+document.addEventListener('DOMContentLoaded', () => {
+    // FIX: Ensure both Modals are hidden on page load
+    document.getElementById('aboutModal').style.display = 'none';
+    document.getElementById('contactModal').style.display = 'none';
+    
+    // FIX: If chatInterface is accidentally visible, ensure it's hidden unless joined
+    if (chatInterface) {
+        chatInterface.style.display = 'none';
     }
 });
