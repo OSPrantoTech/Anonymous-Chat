@@ -3,65 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OSP Chat</title> 
+    <title>OSPranto Tech Chat | Premium</title> 
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="ospranto.ico"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
     <div class="chat-container">
         <header class="chat-header">
-            <h1 class="app-title">OSPranto Tech Chat</h1> 
+            <div class="brand">
+                <h1 class="app-title">OSPranto Tech</h1>
+                <p class="tagline">Future of Communication</p>
+            </div>
             <div id="header-btns"> 
-                <button id="aboutBtn" class="about-button" onclick="toggleAbout()">About</button> 
-                <button id="contactBtn" class="about-button" onclick="toggleContact()">Contact</button>
+                <button id="aboutBtn" class="glass-btn" onclick="toggleAbout()"><i class="fas fa-info-circle"></i></button> 
+                <button id="contactBtn" class="glass-btn highlight" onclick="toggleContact()"><i class="fas fa-paper-plane"></i></button>
             </div>
         </header>
         
-        <div id="room-info">
-            <input type="text" id="usernameInput" placeholder="Your Name" required /> 
-            <input type="text" id="roomInput" placeholder="Room Name (e.g. lounge)" required />
-            <button onclick="joinRoom()" id="joinBtn">Join</button> 
-        </div>
-
-        <div class="welcome-msg">
-            <p>Enter your name and a room name to start chatting!</p>
+        <div id="room-info" class="glass-card">
+            <div class="input-wrapper">
+                <i class="fas fa-user"></i>
+                <input type="text" id="usernameInput" placeholder="Your Alias" required /> 
+            </div>
+            <div class="input-wrapper">
+                <i class="fas fa-door-open"></i>
+                <input type="text" id="roomInput" placeholder="Room Code" required />
+            </div>
+            <button onclick="joinRoom()" id="joinBtn">INITIALIZE CHAT</button> 
         </div>
 
         <div id="chat-interface" style="display: none;">
-            <div id="chat-header-info">
-                <h3 id="roomTitle"></h3>
-                <span id="user-counter-display">Users Online: <span id="userCount">0</span></span>
+            <div class="status-bar">
+                <div id="roomTitle"><i class="fas fa-hashtag"></i> <span></span></div>
+                <div class="online-pill">Online: <span id="userCount">0</span></div>
             </div>
-            <div id="chat-window">
-                </div>
-            <div id="message-input-area">
-                <input type="text" id="msgInput" placeholder="Type your message..." disabled>
+            
+            <div id="chat-window"></div>
+            
+            <div class="message-input-area">
+                <input type="text" id="msgInput" placeholder="Secure messaging..." disabled>
                 <button onclick="sendMessage()" id="sendBtn" disabled>
-                    <i class="fas fa-paper-plane"></i>
+                    <i class="fas fa-bolt"></i>
                 </button>
             </div>
         </div>
     </div>
 
     <div id="aboutModal" class="modal" onclick="toggleAbout()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <span class="close-button" onclick="toggleAbout()">&times;</span>
-            <h3>About This Application</h3>
-            <p class="app-description">Welcome to **OSPranto Tech's** Real-time Chat App. This project uses Firebase for instant messaging.</p>
-            <div class="footer-branding">Powered by **OSPranto Tech**</div>
+        <div class="modal-content glass-card" onclick="event.stopPropagation()">
+            <h3>System Protocol</h3>
+            <p>OSPranto Tech Chat System is powered by Firebase Realtime Database. Secure, fast, and futuristic communication.</p>
+            <button class="close-btn" onclick="toggleAbout()">CLOSE</button>
         </div>
     </div>
     
     <div id="contactModal" class="modal" onclick="toggleContact()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <span class="close-button" onclick="toggleContact()">&times;</span>
-            <h3>Connect with Adnan Hasan Pranto</h3>
-            <div class="contact-section">
-                <a href="https://www.facebook.com/AdnanHasanPranto" target="_blank">Facebook</a> | 
-                <a href="mailto:OSPranto.Official@gmail.com">Email</a> | 
-                <a href="https://github.com/OSPrantoTech" target="_blank">GitHub</a>
+        <div class="modal-content glass-card" onclick="event.stopPropagation()">
+            <h3>Developer Access</h3>
+            <div class="contact-grid">
+                <a href="https://facebook.com/AdnanHasanPranto" target="_blank"><i class="fab fa-facebook"></i></a>
+                <a href="mailto:OSPranto.Official@gmail.com"><i class="fas fa-envelope"></i></a>
+                <a href="https://github.com/OSPrantoTech" target="_blank"><i class="fab fa-github"></i></a>
             </div>
         </div>
     </div>
