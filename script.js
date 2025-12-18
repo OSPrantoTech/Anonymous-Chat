@@ -1,5 +1,3 @@
-// --- script.js (চূড়ান্ত ও ফিক্সড সংস্করণ) ---
-
 // Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCz6tTqCEU2-Tm2jToKj5OACpSbonwXiE",
@@ -8,97 +6,69 @@ const firebaseConfig = {
     projectId: "anonymous-chat-d6512",
     storageBucket: "anonymous-chat-d6512.firebasestorage.app",
     messagingSenderId: "922549544704",
-    appId: "1:922549544704:web:0025aeb67bcf5a74c0b5e5",
-    measurementId: "G-05M7QCFP81"
+    appId: "1:922549544704:web:0025aeb67bcf5a74c0b5e5"
 };
 
-// Initialize Firebase (Uses the globally loaded Firebase object from index.html)
-// Note: This requires <script src="https://www.gstatic.com/firebasejs/5.9.4/firebase.js"></script> in HTML
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const serverTimestamp = firebase.database.ServerValue.TIMESTAMP;
 
-
-// HTML Elements
-const usernameInput = document.getElementById('usernameInput');
-const roomInput = document.getElementById('roomInput');
+// Elements
+const body = document.body;
+const themeToggle = document.getElementById('themeToggle');
 const msgInput = document.getElementById('msgInput');
-const sendBtn = document.getElementById('sendBtn');
-const joinBtn = document.getElementById('joinBtn');
-const chatInterface = document.getElementById('chat-interface');
 const chatWindow = document.getElementById('chat-window');
-const roomTitleDisplay = document.getElementById('roomTitle');
-const userCountDisplay = document.getElementById('userCount');
 
-const aboutBtn = document.getElementById('aboutBtn');
-const contactBtn = document.getElementById('contactBtn');
+// Theme Logic
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    const isDark = body.classList.contains('dark-mode');
+    themeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    localStorage.setItem('osp-theme', isDark ? 'dark' : 'light');
+});
 
-// Feature: Notification Sound
-const notificationSound = new Audio('https://www.soundjay.com/buttons/beep-07.mp3'); 
+if(localStorage.getItem('osp-theme') === 'dark') {
+    body.classList.add('dark-mode');
+    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+}
 
 // Global Variables
 let currentRoom = "";
 let myID = Math.random().toString(36).substr(2, 9);
 let myUsername = "";
+const notificationSound = new Audio('https://www.soundjay.com/buttons/beep-07.mp3');
 
-// Helper Function: Format Timestamp
 function formatTime(timestamp) {
     if (!timestamp) return '';
     const date = new Date(timestamp);
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; 
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    return hours + ':' + minutes + ' ' + ampm;
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-// ----------------------------------------------------
-// CORE FUNCTIONS (Accessed globally from HTML)
-// ----------------------------------------------------
-
-// 1. Join Room Function
 window.joinRoom = function() {
-    const username = usernameInput.value.trim();
-    const roomName = roomInput.value.trim();
+    const user = document.getElementById('usernameInput').value.trim();
+    const room = document.getElementById('roomInput').value.trim();
 
-    if (!username || !roomName) {
-        alert("Please enter both your name and a room name!");
-        return;
-    }
+    if (!user || !room) return alert("Fill all fields!");
 
-    myUsername = username;
-    currentRoom = roomName;
+    myUsername = user;
+    currentRoom = room;
     
-    // UI Update 
     document.querySelector('.welcome-msg').style.display = 'none';
-    chatInterface.style.display = 'flex'; // FIX: Ensures chat interface is visible
-    roomTitleDisplay.innerText = `Room: ${currentRoom}`;
+    document.getElementById('chat-interface').style.display = 'flex';
+    document.getElementById('roomTitle').innerText = `Room: ${currentRoom}`;
 
-    // Disable/Enable Inputs
-    usernameInput.disabled = true;
-    roomInput.disabled = true;
-    joinBtn.disabled = true;
-    msgInput.disabled = false; // FIX: Enables the message input box
-    sendBtn.disabled = false; // FIX: Enables the send button
+    msgInput.disabled = false;
+    document.getElementById('sendBtn').disabled = false;
     
-    // Hide About/Contact buttons after joining
-    aboutBtn.style.display = 'none';
-    contactBtn.style.display = 'none'; 
-
-    chatWindow.innerHTML = ''; 
     loadMessages();
     setupPresence();
 };
 
-// 2. Send Message Function
 window.sendMessage = function() {
     const msg = msgInput.value.trim();
-    if (msg === "") return;
+    if (!msg) return;
 
-    const messagesRef = db.ref(`chat_rooms/${currentRoom}`);
-    messagesRef.push({
+    db.ref(`chat_rooms/${currentRoom}`).push({
         text: msg,
         senderID: myID,
         senderName: myUsername,
@@ -108,88 +78,43 @@ window.sendMessage = function() {
     msgInput.value = "";
 };
 
-// 3. Toggle About Modal
-window.toggleAbout = function() {
-    const modal = document.getElementById('aboutModal');
-    const currentDisplay = window.getComputedStyle(modal).display;
-    modal.style.display = (currentDisplay === "flex") ? "none" : "flex";
-}
-
-// 4. Toggle Contact Modal
-window.toggleContact = function() {
-    const modal = document.getElementById('contactModal');
-    const currentDisplay = window.getComputedStyle(modal).display;
-    modal.style.display = (currentDisplay === "flex") ? "none" : "flex";
-}
-
-
-// ----------------------------------------------------
-// BACKGROUND LOGIC
-// ----------------------------------------------------
-
 function loadMessages() {
-    const messagesRef = db.ref(`chat_rooms/${currentRoom}`);
-    messagesRef.on('child_added', (snapshot) => {
-        const data = snapshot.val();
+    db.ref(`chat_rooms/${currentRoom}`).on('child_added', (snap) => {
+        const data = snap.val();
         displayMessage(data.text, data.senderID, data.senderName, data.timestamp);
-    });
-}
-
-function setupPresence() {
-    const roomPresenceRef = db.ref(`room_presence/${currentRoom}/${myID}`);
-    roomPresenceRef.onDisconnect().remove();
-    roomPresenceRef.set({
-        name: myUsername,
-        timestamp: serverTimestamp
-    });
-
-    const roomPresenceListRef = db.ref(`room_presence/${currentRoom}`);
-    roomPresenceListRef.on('value', (snapshot) => {
-        const count = snapshot.numChildren();
-        userCountDisplay.innerText = count;
     });
 }
 
 function displayMessage(text, senderID, senderName, timestamp) {
     const div = document.createElement('div');
-    div.classList.add('message');
+    div.className = `message ${senderID === myID ? 'my-message' : 'other-message'}`;
     
-    if (senderID === myID) {
-        div.classList.add('my-message');
-    } else {
-        div.classList.add('other-message');
-        notificationSound.play(); 
-    }
-    
-    const headerDiv = document.createElement('div');
-    headerDiv.classList.add('message-header');
+    if(senderID !== myID) notificationSound.play();
 
-    const nameSpan = document.createElement('span');
-    nameSpan.classList.add('sender-name');
-    nameSpan.innerText = senderName;
-
-    const timeSpan = document.createElement('span');
-    timeSpan.classList.add('timestamp');
-    timeSpan.innerText = formatTime(timestamp); 
-
-    const textP = document.createElement('p');
-    textP.innerText = text;
-
-    headerDiv.appendChild(nameSpan);
-    headerDiv.appendChild(timeSpan);
-    div.appendChild(headerDiv);
-    div.appendChild(textP);
+    div.innerHTML = `
+        <span class="sender-name">${senderID === myID ? 'You' : senderName}</span>
+        <div>${text}</div>
+        <span class="timestamp">${formatTime(timestamp)}</span>
+    `;
 
     chatWindow.appendChild(div);
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
+function setupPresence() {
+    const ref = db.ref(`room_presence/${currentRoom}/${myID}`);
+    ref.onDisconnect().remove();
+    ref.set({ name: myUsername });
 
-// NEW FEATURE FIX: Send message using Enter key
-msgInput.addEventListener('keypress', function (e) {
-    // Check if the input is enabled and the key pressed is Enter
-    if (!msgInput.disabled && e.key === 'Enter') {
-        e.preventDefault(); 
-        window.sendMessage();
-    }
-});
+    db.ref(`room_presence/${currentRoom}`).on('value', (snap) => {
+        document.getElementById('userCount').innerText = snap.numChildren();
+    });
+}
+
+msgInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') window.sendMessage(); });
+
+window.toggleAbout = () => { document.getElementById('aboutModal').style.display = 
+    document.getElementById('aboutModal').style.display === 'flex' ? 'none' : 'flex'; };
+
+window.toggleContact = () => { document.getElementById('contactModal').style.display = 
+    document.getElementById('contactModal').style.display === 'flex' ? 'none' : 'flex'; };
