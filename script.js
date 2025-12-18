@@ -19,9 +19,13 @@ window.joinRoom = function() {
     myName = document.getElementById('usernameInput').value.trim();
     currentRoom = document.getElementById('roomInput').value.trim();
 
-    if(!myName || !currentRoom) return alert("System access denied. Check credentials.");
+    if(!myName || !currentRoom) return alert("System access denied.");
 
+    // Hide Login and Lower Info space
     document.getElementById('room-info').style.display = 'none';
+    document.getElementById('extra-info').style.display = 'none';
+    
+    // Show Chat Interface
     document.getElementById('chat-interface').style.display = 'flex';
     document.querySelector('#roomTitle span').innerText = currentRoom;
 
@@ -56,12 +60,11 @@ window.sendMessage = function() {
     input.value = "";
 };
 
-// Modal Toggle Logic
+// Modal Logic
 window.toggleAbout = () => {
     const m = document.getElementById('aboutModal');
     m.style.display = (m.style.display === "flex") ? "none" : "flex";
 };
-
 window.toggleContact = () => {
     const m = document.getElementById('contactModal');
     m.style.display = (m.style.display === "flex") ? "none" : "flex";
