@@ -19,8 +19,8 @@
             </div>
             <div id="header-btns"> 
                 <button id="themeToggle" class="theme-btn"><i class="fas fa-moon"></i></button>
-                <button id="aboutBtn" class="nav-btn" onclick="toggleAbout()">About</button> 
-                <button id="contactBtn" class="nav-btn highlight" onclick="toggleContact()">Contact</button>
+                <button class="nav-btn" onclick="toggleAbout()">About</button> 
+                <button class="nav-btn highlight" onclick="toggleContact()">Contact</button>
             </div>
         </header>
         
@@ -33,7 +33,7 @@
                 <i class="fas fa-hashtag"></i>
                 <input type="text" id="roomInput" placeholder="Room Name" required />
             </div>
-            <button onclick="joinRoom()" id="joinBtn">Join Adventure</button> 
+            <button id="joinBtn">Join Adventure</button> 
         </div>
 
         <div id="chat-interface" style="display: none;">
@@ -42,11 +42,9 @@
                 <span class="user-badge"><i class="fas fa-users"></i> <span id="userCount">0</span> Online</span>
             </div>
             <div id="chat-window"></div>
-            <div id="message-input-area">
+            <div class="message-input-bar">
                 <input type="text" id="msgInput" placeholder="Write a message..." disabled>
-                <button onclick="sendMessage()" id="sendBtn" disabled>
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+                <button id="sendBtn" disabled><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
@@ -54,15 +52,16 @@
     <div id="aboutModal" class="modal" onclick="toggleAbout()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="close" onclick="toggleAbout()">&times;</span>
-            <h3>About Application</h3>
-            <p>OSPranto Tech-এর এই চ্যাট অ্যাপটি Firebase Realtime Database ব্যবহার করে তৈরি করা হয়েছে. এটি একটি দ্রুত এবং রুম-বেসড মেসেজিং সিস্টেম।</p>
+            <h3>About This Application</h3>
+            <p>Welcome to **OSPranto Tech's** Real-time Chat App. This project uses Firebase for instant messaging.</p>
+            <div class="footer-branding">Powered by **OSPranto Tech**</div>
         </div>
     </div>
     
     <div id="contactModal" class="modal" onclick="toggleContact()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="close" onclick="toggleContact()">&times;</span>
-            <h3>Connect with Developer</h3>
+            <h3>Connect with Adnan Hasan Pranto</h3>
             <div class="social-links">
                 <a href="https://www.facebook.com/AdnanHasanPranto" target="_blank" class="fb"><i class="fab fa-facebook"></i> Facebook</a>
                 <a href="mailto:OSPranto.Official@gmail.com" class="mail"><i class="fas fa-envelope"></i> Email</a>
