@@ -44,35 +44,33 @@
                 <div id="roomTitle"><i class="fas fa-hashtag"></i> <span></span></div>
                 <div class="online-pill"><i class="fas fa-circle"></i> <span id="userCount">0</span> Online</div>
             </div>
-            
             <div id="chat-window"></div>
-            
             <div class="message-input-area">
                 <input type="text" id="msgInput" placeholder="Type encrypted message..." disabled>
-                <button onclick="sendMessage()" id="sendBtn" disabled>
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+                <button onclick="sendMessage()" id="sendBtn" disabled><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
 
     <div id="aboutModal" class="modal" onclick="toggleAbout()">
         <div class="modal-content glass-card" onclick="event.stopPropagation()">
+            <span class="close-btn-top" onclick="toggleAbout()">&times;</span>
             <h3>System Protocol</h3>
             <p>OSPranto Tech Chat System is powered by Firebase Realtime Database. Secure, fast, and futuristic communication.</p>
-            <button class="close-btn" onclick="toggleAbout()">DISMISS</button>
+            <button class="action-btn" onclick="toggleAbout()">DISMISS</button>
         </div>
     </div>
     
     <div id="contactModal" class="modal" onclick="toggleContact()">
         <div class="modal-content glass-card" onclick="event.stopPropagation()">
+            <span class="close-btn-top" onclick="toggleContact()">&times;</span>
             <h3>Developer Access</h3>
             <div class="contact-grid">
                 <a href="https://facebook.com/AdnanHasanPranto" target="_blank"><i class="fab fa-facebook-f"></i></a>
                 <a href="mailto:OSPranto.Official@gmail.com"><i class="fas fa-envelope"></i></a>
                 <a href="https://github.com/OSPrantoTech" target="_blank"><i class="fab fa-github"></i></a>
-                <a href="https://t.me/MrMysteryMoon" target="_blank"><i class="fab fa-telegram-plane"></i></a>
             </div>
+            <button class="action-btn" onclick="toggleContact()">BACK</button>
         </div>
     </div>
     
