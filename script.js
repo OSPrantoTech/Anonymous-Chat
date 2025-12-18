@@ -1,3 +1,5 @@
+// --- script.js (OSPranto Tech Chat - Optimized Version) ---
+
 // Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCz6tTqCEU2-Tm2jToKj5OACpSbonwXiE",
@@ -6,68 +8,75 @@ const firebaseConfig = {
     projectId: "anonymous-chat-d6512",
     storageBucket: "anonymous-chat-d6512.firebasestorage.app",
     messagingSenderId: "922549544704",
-    appId: "1:922549544704:web:0025aeb67bcf5a74c0b5e5"
+    appId: "1:922549544704:web:0025aeb67bcf5a74c0b5e5",
+    measurementId: "G-05M7QCFP81"
 };
 
+// Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const serverTimestamp = firebase.database.ServerValue.TIMESTAMP;
 
-// Global variables
+// HTML Elements
+const usernameInput = document.getElementById('usernameInput');
+const roomInput = document.getElementById('roomInput');
+const msgInput = document.getElementById('msgInput');
+const sendBtn = document.getElementById('sendBtn');
+const joinBtn = document.getElementById('joinBtn');
+const chatInterface = document.getElementById('chat-interface');
+const chatWindow = document.getElementById('chat-window');
+const roomTitleDisplay = document.getElementById('roomTitle');
+const userCountDisplay = document.getElementById('userCount');
+
+// Feature: Notification Sound
+const notificationSound = new Audio('https://www.soundjay.com/buttons/beep-07.mp3'); 
+
+// Global Variables
 let currentRoom = "";
 let myID = Math.random().toString(36).substr(2, 9);
 let myUsername = "";
 
-// Theme Logic
-const themeToggle = document.getElementById('themeToggle');
-themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    themeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-    localStorage.setItem('osp-theme', isDark ? 'dark' : 'light');
-});
-
-if(localStorage.getItem('osp-theme') === 'dark') {
-    document.body.classList.add('dark-mode');
-    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+// Helper Function: Format Timestamp
+function formatTime(timestamp) {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-// Fixed Toggle Functions
-window.toggleAbout = function() {
-    const modal = document.getElementById('aboutModal');
-    modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
-};
+// ----------------------------------------------------
+// CORE FUNCTIONS
+// ----------------------------------------------------
 
-window.toggleContact = function() {
-    const modal = document.getElementById('contactModal');
-    modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
-};
+// 1. Join Room Function
+window.joinRoom = function() {
+    const username = usernameInput.value.trim();
+    const roomName = roomInput.value.trim();
 
-// Fixed Join Adventure Logic
-document.getElementById('joinBtn').addEventListener('click', function() {
-    const user = document.getElementById('usernameInput').value.trim();
-    const room = document.getElementById('roomInput').value.trim();
-
-    if (!user || !room) {
-        alert("Please enter both name and room!");
+    if (!username || !roomName) {
+        alert("Please enter both your name and a room name!");
         return;
     }
 
-    myUsername = user;
-    currentRoom = room;
-
-    document.getElementById('room-info').style.display = 'none';
-    document.getElementById('chat-interface').style.display = 'flex';
-    document.getElementById('roomTitle').innerText = `Room: ${currentRoom}`;
+    myUsername = username;
+    currentRoom = roomName;
     
-    document.getElementById('msgInput').disabled = false;
-    document.getElementById('sendBtn').disabled = false;
+    // UI Update
+    document.querySelector('.welcome-msg').style.display = 'none';
+    document.getElementById('room-info').style.display = 'none';
+    chatInterface.style.display = 'flex';
+    roomTitleDisplay.innerText = `Room: ${currentRoom}`;
 
+    // Enable Message Input
+    msgInput.disabled = false;
+    sendBtn.disabled = false;
+    
+    chatWindow.innerHTML = ''; 
     loadMessages();
     setupPresence();
-});
+};
 
-function sendMessage() {
-    const msgInput = document.getElementById('msgInput');
+// 2. Send Message Function
+window.sendMessage = function() {
     const msg = msgInput.value.trim();
     if (msg === "") return;
 
@@ -75,42 +84,80 @@ function sendMessage() {
         text: msg,
         senderID: myID,
         senderName: myUsername,
-        timestamp: firebase.database.ServerValue.TIMESTAMP
+        timestamp: serverTimestamp
     });
+
     msgInput.value = "";
+};
+
+// 3. Toggle Modals
+window.toggleAbout = function() {
+    const modal = document.getElementById('aboutModal');
+    modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
 }
 
-document.getElementById('sendBtn').addEventListener('click', sendMessage);
-document.getElementById('msgInput').addEventListener('keypress', (e) => {
-    if(e.key === 'Enter') sendMessage();
-});
+window.toggleContact = function() {
+    const modal = document.getElementById('contactModal');
+    modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
+}
+
+// ----------------------------------------------------
+// BACKGROUND LOGIC
+// ----------------------------------------------------
 
 function loadMessages() {
-    db.ref(`chat_rooms/${currentRoom}`).on('child_added', (snap) => {
-        const data = snap.val();
+    const messagesRef = db.ref(`chat_rooms/${currentRoom}`);
+    messagesRef.on('child_added', (snapshot) => {
+        const data = snapshot.val();
         displayMessage(data.text, data.senderID, data.senderName, data.timestamp);
     });
 }
 
 function displayMessage(text, senderID, senderName, timestamp) {
     const div = document.createElement('div');
-    div.className = `message ${senderID === myID ? 'my-message' : 'other-message'}`;
-    const time = timestamp ? new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+    div.classList.add('message');
+    
+    // নিজের মেসেজ ডানে এবং অন্যের বামে নেওয়ার লজিক
+    if (senderID === myID) {
+        div.classList.add('my-message');
+    } else {
+        div.classList.add('other-message');
+        notificationSound.play(); 
+    }
     
     div.innerHTML = `
         <span class="sender-name">${senderID === myID ? 'You' : senderName}</span>
-        <div>${text}</div>
-        <span class="timestamp" style="font-size: 0.6rem; opacity: 0.7;">${time}</span>
+        <div class="msg-content">${text}</div>
+        <span class="timestamp">${formatTime(timestamp)}</span>
     `;
-    document.getElementById('chat-window').appendChild(div);
-    document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
+
+    chatWindow.appendChild(div);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
 function setupPresence() {
-    const ref = db.ref(`room_presence/${currentRoom}/${myID}`);
-    ref.onDisconnect().remove();
-    ref.set({ name: myUsername });
-    db.ref(`room_presence/${currentRoom}`).on('value', (snap) => {
-        document.getElementById('userCount').innerText = snap.numChildren();
+    const roomPresenceRef = db.ref(`room_presence/${currentRoom}/${myID}`);
+    roomPresenceRef.onDisconnect().remove();
+    roomPresenceRef.set({ name: myUsername });
+
+    db.ref(`room_presence/${currentRoom}`).on('value', (snapshot) => {
+        userCountDisplay.innerText = snapshot.numChildren();
+    });
+}
+
+// Event Listeners
+msgInput.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        window.sendMessage();
+    }
+});
+
+// Theme Toggle Logic
+const themeBtn = document.getElementById('themeToggle');
+if(themeBtn) {
+    themeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        themeBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     });
 }
