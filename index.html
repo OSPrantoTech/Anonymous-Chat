@@ -17,10 +17,6 @@
                 <h1 class="app-title">OSPranto Tech</h1>
                 <p class="tagline">Future of Communication</p>
             </div>
-            <div id="header-btns"> 
-                <button id="aboutBtn" class="premium-icon-btn" onclick="toggleAbout()"><i class="fas fa-info-circle"></i></button> 
-                <button id="contactBtn" class="premium-icon-btn highlight" onclick="toggleContact()"><i class="fas fa-user-astronaut"></i></button>
-            </div>
         </header>
         
         <div id="room-info" class="glass-card">
@@ -33,6 +29,13 @@
                 <input type="text" id="roomInput" placeholder="Room Code..." required />
             </div>
             <button onclick="joinRoom()" id="joinBtn">INITIALIZE SYSTEM</button> 
+        </div>
+
+        <div id="extra-info">
+            <div class="info-buttons">
+                <button onclick="toggleAbout()">About Protocol</button>
+                <button onclick="toggleContact()">Developer Access</button>
+            </div>
         </div>
 
         <div id="chat-interface" style="display: none;">
@@ -50,16 +53,14 @@
 
     <div id="aboutModal" class="modal" onclick="toggleAbout()">
         <div class="modal-content glass-card-modal" onclick="event.stopPropagation()">
-            <span class="close-btn-top" onclick="toggleAbout()">&times;</span>
             <h3 class="glow-text-small">System Protocol</h3>
-            <p>OSPranto Tech Chat System is powered by Firebase Realtime Database. Secure, fast, and futuristic communication.</p>
+            <p>OSPranto Tech Chat System is a high-speed, Firebase-powered communication hub designed for security and style.</p>
             <button class="modal-action-btn" onclick="toggleAbout()">DISMISS</button>
         </div>
     </div>
     
     <div id="contactModal" class="modal" onclick="toggleContact()">
         <div class="modal-content glass-card-modal" onclick="event.stopPropagation()">
-            <span class="close-btn-top" onclick="toggleContact()">&times;</span>
             <h3 class="glow-text-small">Developer Access</h3>
             <div class="contact-grid">
                 <a href="https://facebook.com/AdnanHasanPranto" target="_blank"><i class="fab fa-facebook-f"></i></a>
