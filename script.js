@@ -19,7 +19,7 @@ window.joinRoom = function() {
     myName = document.getElementById('usernameInput').value.trim();
     currentRoom = document.getElementById('roomInput').value.trim();
 
-    if(!myName || !currentRoom) return alert("System requires access credentials.");
+    if(!myName || !currentRoom) return alert("System requires credentials.");
 
     document.getElementById('room-info').style.display = 'none';
     document.getElementById('intro-text').style.display = 'none';
@@ -29,65 +29,43 @@ window.joinRoom = function() {
     document.getElementById('msgInput').disabled = false;
     document.getElementById('sendBtn').disabled = false;
 
-    loadMessages();
-    setupPresence();
+    db.ref(`chat_rooms/${currentRoom}`).on('child_added', snap => {
+        const d = snap.val();
+        displayMessage(d.text, d.senderID, d.senderName, d.timestamp);
+    });
 };
 
-function loadMessages() {
-    db.ref(`chat_rooms/${currentRoom}`).on('child_added', (snap) => {
-        const data = snap.val();
-        displayMessage(data.text, data.senderID, data.senderName, data.timestamp);
-    });
-}
-
-function displayMessage(text, senderID, senderName, timestamp) {
-    const chatWin = document.getElementById('chat-window');
+function displayMessage(text, id, name, time) {
+    const win = document.getElementById('chat-window');
     const div = document.createElement('div');
-    div.className = `message ${senderID === myID ? 'my-message' : 'other-message'}`;
-    
-    const time = new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    div.className = `message ${id === myID ? 'my-message' : 'other-message'}`;
+    const t = new Date(time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 
-    div.innerHTML = `
-        <span class="sender-name">${senderID === myID ? 'You' : senderName}</span>
-        <div class="msg-content">${text}</div>
-        <span class="timestamp">${time}</span>
-    `;
-    chatWin.appendChild(div);
-    chatWin.scrollTop = chatWin.scrollHeight;
+    div.innerHTML = `<span style="font-size:0.6rem; color:var(--accent); font-weight:bold;">${id===myID?'YOU':name}</span>
+                     <div>${text}</div>
+                     <span style="font-size:0.55rem; opacity:0.5; text-align:right; display:block;">${t}</span>`;
+    win.appendChild(div);
+    win.scrollTop = win.scrollHeight;
 }
 
 window.sendMessage = function() {
     const input = document.getElementById('msgInput');
-    const msg = input.value.trim();
-    if(!msg) return;
-
+    if(!input.value.trim()) return;
     db.ref(`chat_rooms/${currentRoom}`).push({
-        text: msg,
-        senderID: myID,
-        senderName: myName,
-        timestamp: firebase.database.ServerValue.TIMESTAMP
+        text: input.value, senderID: myID, senderName: myName, timestamp: Date.now()
     });
     input.value = "";
 };
 
-function setupPresence() {
-    const ref = db.ref(`room_presence/${currentRoom}/${myID}`);
-    ref.onDisconnect().remove();
-    ref.set({ name: myName });
-
-    db.ref(`room_presence/${currentRoom}`).on('value', (snap) => {
-        document.getElementById('userCount').innerText = snap.numChildren();
-    });
-}
-
+// Modal Logic FIX
 window.toggleAbout = () => {
     const m = document.getElementById('aboutModal');
-    m.style.display = (window.getComputedStyle(m).display === 'flex') ? 'none' : 'flex';
+    m.style.display = (m.style.display === "flex") ? "none" : "flex";
 };
 
 window.toggleContact = () => {
     const m = document.getElementById('contactModal');
-    m.style.display = (window.getComputedStyle(m).display === 'flex') ? 'none' : 'flex';
+    m.style.display = (m.style.display === "flex") ? "none" : "flex";
 };
 
-document.getElementById('msgInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+document.getElementById('msgInput').addEventListener('keypress', (e) => { if(e.key==='Enter') sendMessage(); });
