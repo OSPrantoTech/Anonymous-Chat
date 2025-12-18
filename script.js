@@ -1,3 +1,4 @@
+// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCz6tTqCEU2-Tm2jToKj5OACpSbonwXiE",
     authDomain: "anonymous-chat-d6512.firebaseapp.com",
@@ -11,61 +12,67 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-let myID = Math.random().toString(36).substr(2, 9);
 let currentRoom = "";
-let myName = "";
+let myID = Math.random().toString(36).substr(2, 9);
+let myUsername = "";
 
+// 1. Join Room
 window.joinRoom = function() {
-    myName = document.getElementById('usernameInput').value.trim();
-    currentRoom = document.getElementById('roomInput').value.trim();
+    const username = document.getElementById('usernameInput').value.trim();
+    const roomName = document.getElementById('roomInput').value.trim();
 
-    if(!myName || !currentRoom) return alert("System requires credentials.");
+    if (!username || !roomName) {
+        alert("Please enter both your name and a room name!");
+        return;
+    }
 
-    document.getElementById('room-info').style.display = 'none';
-    document.getElementById('intro-text').style.display = 'none';
+    myUsername = username;
+    currentRoom = roomName;
+    
+    document.querySelector('.welcome-msg').style.display = 'none';
     document.getElementById('chat-interface').style.display = 'flex';
-    document.querySelector('#roomTitle span').innerText = currentRoom;
+    document.getElementById('roomTitle').innerText = `Room: ${currentRoom}`;
 
     document.getElementById('msgInput').disabled = false;
     document.getElementById('sendBtn').disabled = false;
-
-    db.ref(`chat_rooms/${currentRoom}`).on('child_added', snap => {
-        const d = snap.val();
-        displayMessage(d.text, d.senderID, d.senderName, d.timestamp);
-    });
+    
+    loadMessages();
 };
 
-function displayMessage(text, id, name, time) {
-    const win = document.getElementById('chat-window');
-    const div = document.createElement('div');
-    div.className = `message ${id === myID ? 'my-message' : 'other-message'}`;
-    const t = new Date(time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-
-    div.innerHTML = `<span style="font-size:0.6rem; color:var(--accent); font-weight:bold;">${id===myID?'YOU':name}</span>
-                     <div>${text}</div>
-                     <span style="font-size:0.55rem; opacity:0.5; text-align:right; display:block;">${t}</span>`;
-    win.appendChild(div);
-    win.scrollTop = win.scrollHeight;
-}
-
+// 2. Send Message
 window.sendMessage = function() {
-    const input = document.getElementById('msgInput');
-    if(!input.value.trim()) return;
+    const msgInput = document.getElementById('msgInput');
+    const msg = msgInput.value.trim();
+    if (msg === "") return;
+
     db.ref(`chat_rooms/${currentRoom}`).push({
-        text: input.value, senderID: myID, senderName: myName, timestamp: Date.now()
+        text: msg,
+        senderID: myID,
+        senderName: myUsername,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
     });
-    input.value = "";
+    msgInput.value = "";
 };
 
-// Modal Logic FIX
-window.toggleAbout = () => {
-    const m = document.getElementById('aboutModal');
-    m.style.display = (m.style.display === "flex") ? "none" : "flex";
+// 3. Modal Toggles (FIXED)
+window.toggleAbout = function() {
+    const modal = document.getElementById('aboutModal');
+    modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
 };
 
-window.toggleContact = () => {
-    const m = document.getElementById('contactModal');
-    m.style.display = (m.style.display === "flex") ? "none" : "flex";
+window.toggleContact = function() {
+    const modal = document.getElementById('contactModal');
+    modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
 };
 
-document.getElementById('msgInput').addEventListener('keypress', (e) => { if(e.key==='Enter') sendMessage(); });
+function loadMessages() {
+    db.ref(`chat_rooms/${currentRoom}`).on('child_added', (snap) => {
+        const data = snap.val();
+        const win = document.getElementById('chat-window');
+        const div = document.createElement('div');
+        div.className = `message ${data.senderID === myID ? 'my-message' : 'other-message'}`;
+        div.innerHTML = `<strong>${data.senderName}</strong><p>${data.text}</p>`;
+        win.appendChild(div);
+        win.scrollTop = win.scrollHeight;
+    });
+}
