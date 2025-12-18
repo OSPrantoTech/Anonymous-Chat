@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OSP Chat</title> 
+    <title>OSP Chat - OSPranto Tech</title> 
     <link rel="stylesheet" href="style.css">
-    
     <link rel="icon" type="image/x-icon" href="ospranto.ico"> 
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
-
-    <div class="chat-container">
-
+<body class="light-mode"> <div class="chat-container">
         <header class="chat-header">
-            <h1 class="app-title">OSPranto Tech Chat</h1> 
+            <div class="brand-info">
+                <h1 class="app-title">OSPranto Tech Chat</h1>
+                <small class="tagline">Technology with a Sense of Ease</small>
+            </div>
             <div id="header-btns"> 
+                <button id="themeToggle" class="icon-btn"><i class="fas fa-moon"></i></button>
                 <button id="aboutBtn" class="about-button" onclick="toggleAbout()">About</button> 
                 <button id="contactBtn" class="about-button" onclick="toggleContact()">Contact</button>
             </div>
@@ -24,75 +24,54 @@
         <div id="room-info">
             <input type="text" id="usernameInput" placeholder="Your Name" required /> 
             <input type="text" id="roomInput" placeholder="Room Name (e.g. lounge)" required />
-            <button onclick="joinRoom()" id="joinBtn">Join</button> 
+            <button onclick="joinRoom()" id="joinBtn">Join Room</button> 
         </div>
 
         <div class="welcome-msg">
+            <i class="fas fa-comments chat-icon"></i>
             <p>Enter your name and a room name to start chatting!</p>
         </div>
 
         <div id="chat-interface" style="display: none;">
-            <div id="chat-header">
+            <div id="chat-header-info">
                 <h3 id="roomTitle"></h3>
-                <span id="user-counter-display">Users Online: <span id="userCount">0</span></span>
+                <span id="user-counter-display"><i class="fas fa-users"></i> Online: <span id="userCount">0</span></span>
             </div>
-            <div id="chat-window">
-                </div>
+            <div id="chat-window"></div>
             <div id="message-input-area">
-                <input type="text" id="msgInput" placeholder="Type your message..." disabled>
-                <button onclick="sendMessage()" id="sendBtn" disabled>Send</button>
+                <input type="text" id="msgInput" placeholder="Write a message..." disabled>
+                <button onclick="sendMessage()" id="sendBtn" disabled>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
         </div>
-
     </div>
 
     <div id="aboutModal" class="modal" onclick="toggleAbout()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-button" onclick="toggleAbout()">&times;</span>
-            
             <h3>About This Application</h3>
             <p class="app-description">
-                Welcome to **OSPranto Tech's** Real-time Chat App. This project demonstrates a fast, room-based messaging system built using modern web technologies and Firebase Realtime Database. Connect instantly with friends and communities by simply choosing a room name.
+                Welcome to **OSPranto Tech's** Real-time Chat App. This project demonstrates a fast, room-based messaging system built using modern web technologies and Firebase Realtime Database.
             </p>
-            <div class="footer-branding">
-                Powered by **OSPranto Tech**
-            </div>
+            <div class="footer-branding">Powered by **OSPranto Tech**</div>
         </div>
     </div>
     
     <div id="contactModal" class="modal" onclick="toggleContact()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-button" onclick="toggleContact()">&times;</span>
-            
             <h3>Connect with Adnan Hasan Pranto</h3>
-            
-            <div class="contact-section">
-                <ul>
-                    <li>
-                        <strong>Facebook:</strong> 
-                        <a href="https://www.facebook.com/AdnanHasanPranto" target="_blank">Adnan Hasan Pranto</a>
-                    </li>
-                    <li>
-                        <strong>Email:</strong> 
-                        <a href="mailto:OSPranto.Official@gmail.com">OSPranto.Official@gmail.com</a>
-                    </li>
-                    <li>
-                        <strong>GitHub:</strong> 
-                        <a href="https://github.com/OSPrantoTech" target="_blank">OSPranto Tech</a>
-                    </li>
-                    <li>
-                        <strong>Telegram:</strong> 
-                        <a href="https://t.me/MrMysteryMoon" target="_blank">@MrMysteryMoon</a>
-                    </li>
-                </ul>
+            <div class="contact-list">
+                <a href="https://www.facebook.com/AdnanHasanPranto" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+                <a href="mailto:OSPranto.Official@gmail.com"><i class="fas fa-envelope"></i> Email</a>
+                <a href="https://github.com/OSPrantoTech" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                <a href="https://t.me/MrMysteryMoon" target="_blank"><i class="fab fa-telegram"></i> Telegram</a>
             </div>
         </div>
     </div>
     
     <script src="https://www.gstatic.com/firebasejs/5.9.4/firebase.js"></script>
-    
     <script src="script.js"></script>
 </body>
 </html>
-
-
