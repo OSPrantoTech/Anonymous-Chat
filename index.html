@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OSPranto Tech Chat | Premium</title> 
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>OSP Chat</title> 
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="ospranto.ico"> 
 </head>
@@ -13,64 +11,59 @@
 
     <div class="chat-container">
         <header class="chat-header">
-            <div class="brand">
-                <h1 class="app-title">OSPranto Tech</h1>
-                <p class="tagline">Future of Communication</p>
-            </div>
+            <h1 class="app-title">OSPranto Tech Chat</h1> 
             <div id="header-btns"> 
-                <button id="aboutBtn" class="premium-icon-btn" onclick="toggleAbout()"><i class="fas fa-info-circle"></i></button> 
-                <button id="contactBtn" class="premium-icon-btn highlight" onclick="toggleContact()"><i class="fas fa-user-astronaut"></i></button>
+                <button id="aboutBtn" class="about-button" onclick="toggleAbout()">About</button> 
+                <button id="contactBtn" class="about-button" onclick="toggleContact()">Contact</button>
             </div>
         </header>
         
-        <div id="room-info" class="glass-card">
-            <div class="input-group">
-                <i class="fas fa-id-badge"></i>
-                <input type="text" id="usernameInput" placeholder="Enter Alias..." required /> 
-            </div>
-            <div class="input-group">
-                <i class="fas fa-terminal"></i>
-                <input type="text" id="roomInput" placeholder="Room Code..." required />
-            </div>
-            <button onclick="joinRoom()" id="joinBtn">INITIALIZE SYSTEM</button> 
+        <div id="room-info">
+            <input type="text" id="usernameInput" placeholder="Your Name" required /> 
+            <input type="text" id="roomInput" placeholder="Room Name (e.g. lounge)" required />
+            <button onclick="joinRoom()" id="joinBtn">Join</button> 
         </div>
 
-        <div class="welcome-msg" id="intro-text">
-            <p><i class="fas fa-satellite-dish"></i> Waiting for system uplink...</p>
+        <div class="welcome-msg">
+            <p>Enter your name and a room name to start chatting!</p>
         </div>
 
         <div id="chat-interface" style="display: none;">
-            <div class="chat-status-bar">
-                <div id="roomTitle"><i class="fas fa-hashtag"></i> <span></span></div>
-                <div class="online-pill"><i class="fas fa-circle"></i> <span id="userCount">0</span> Online</div>
+            <div id="chat-header">
+                <h3 id="roomTitle"></h3>
+                <span id="user-counter-display">Users Online: <span id="userCount">0</span></span>
             </div>
             <div id="chat-window"></div>
-            <div class="message-input-area">
-                <input type="text" id="msgInput" placeholder="Type encrypted message..." disabled>
-                <button onclick="sendMessage()" id="sendBtn" disabled><i class="fas fa-paper-plane"></i></button>
+            <div id="message-input-area">
+                <input type="text" id="msgInput" placeholder="Type your message..." disabled>
+                <button onclick="sendMessage()" id="sendBtn" disabled>Send</button>
             </div>
         </div>
     </div>
 
-    <div id="aboutModal" class="modal" onclick="toggleAbout()">
-        <div class="modal-content glass-card" onclick="event.stopPropagation()">
-            <span class="close-btn-top" onclick="toggleAbout()">&times;</span>
-            <h3>System Protocol</h3>
-            <p>OSPranto Tech Chat System is powered by Firebase Realtime Database. Secure, fast, and futuristic communication.</p>
-            <button class="action-btn" onclick="toggleAbout()">DISMISS</button>
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="toggleAbout()">&times;</span>
+            <h3>About This Application</h3>
+            <p class="app-description">
+                Welcome to **OSPranto Tech's** Real-time Chat App. This project demonstrates a fast, room-based messaging system built using modern web technologies and Firebase Realtime Database.
+            </p>
+            <div class="footer-branding">Powered by **OSPranto Tech**</div>
         </div>
     </div>
     
-    <div id="contactModal" class="modal" onclick="toggleContact()">
-        <div class="modal-content glass-card" onclick="event.stopPropagation()">
-            <span class="close-btn-top" onclick="toggleContact()">&times;</span>
-            <h3>Developer Access</h3>
-            <div class="contact-grid">
-                <a href="https://facebook.com/AdnanHasanPranto" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                <a href="mailto:OSPranto.Official@gmail.com"><i class="fas fa-envelope"></i></a>
-                <a href="https://github.com/OSPrantoTech" target="_blank"><i class="fab fa-github"></i></a>
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="toggleContact()">&times;</span>
+            <h3>Connect with Adnan Hasan Pranto</h3>
+            <div class="contact-section">
+                <ul>
+                    <li><strong>Facebook:</strong> <a href="https://www.facebook.com/AdnanHasanPranto" target="_blank">Adnan Hasan Pranto</a></li>
+                    <li><strong>Email:</strong> <a href="mailto:OSPranto.Official@gmail.com">OSPranto.Official@gmail.com</a></li>
+                    <li><strong>GitHub:</strong> <a href="https://github.com/OSPrantoTech" target="_blank">OSPranto Tech</a></li>
+                    <li><strong>Telegram:</strong> <a href="https://t.me/MrMysteryMoon" target="_blank">@MrMysteryMoon</a></li>
+                </ul>
             </div>
-            <button class="action-btn" onclick="toggleContact()">BACK</button>
         </div>
     </div>
     
