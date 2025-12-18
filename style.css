@@ -1,77 +1,83 @@
-:root {
-    --accent: #00e5ff;
-    --accent-glow: rgba(0, 229, 255, 0.5);
-    --bg-dark: #0a0e17;
-    --glass: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.1);
-}
-
+/* --- Original Styles --- */
 body {
-    background: radial-gradient(circle at center, #1a1f35 0%, #05070a 100%);
-    font-family: 'Inter', sans-serif;
-    color: #e0e0e0; margin: 0; overflow: hidden;
-    display: flex; justify-content: center; align-items: center; height: 100vh;
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
 }
 
-/* Container & Glow Title */
 .chat-container {
-    width: 95%; max-width: 480px; height: 90vh;
-    background: var(--glass); backdrop-filter: blur(15px);
-    border: 1px solid var(--glass-border); border-radius: 25px;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8); display: flex; flex-direction: column;
+    width: 95%; max-width: 600px; background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px; overflow: hidden; height: 95vh; 
+    display: flex; flex-direction: column;
 }
 
-.app-title {
-    font-family: 'Orbitron', sans-serif; color: var(--accent);
-    text-shadow: 0 0 10px var(--accent-glow); margin: 0; font-size: 1.3rem;
+.chat-header {
+    background-color: #2563eb; color: white; padding: 15px;
+    display: flex; justify-content: space-between; align-items: center;
 }
 
-/* Modals FIX: Initially hidden and centered */
+.about-button {
+    background: none; border: 1px solid white; color: white;
+    padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75em; 
+}
+
+#room-info {
+    display: flex; padding: 10px; gap: 5px; border-bottom: 1px solid #ddd;
+}
+
+#room-info input, #room-info button {
+    padding: 10px; border: 1px solid #ccc; border-radius: 4px; flex-grow: 1;
+}
+
+#room-info button { background-color: #10b981; color: white; border: none; font-weight: bold; }
+
+.welcome-msg { padding: 20px; text-align: center; color: #666; flex-grow: 1; }
+
+#chat-interface { display: flex; flex-direction: column; flex-grow: 1; min-height: 0; }
+
+#chat-window { flex-grow: 1; overflow-y: auto; padding: 15px; background-color: #fff; }
+
+.message { margin-bottom: 10px; padding: 8px 12px; border-radius: 18px; max-width: 80%; word-wrap: break-word; }
+.my-message { background-color: #2563eb; color: white; margin-left: auto; border-bottom-right-radius: 4px; }
+.other-message { background-color: #e5e7eb; color: #374151; margin-right: auto; border-bottom-left-radius: 4px; }
+
+#message-input-area { display: flex; padding: 10px; gap: 5px; border-top: 1px solid #ddd; }
+#message-input-area input { flex-grow: 1; border-radius: 20px; padding: 10px 15px; border: 1px solid #ccc; }
+#message-input-area button { border-radius: 20px; background-color: #10b981; color: white; padding: 10px 15px; border: none; }
+
+/* --- FIXED MODAL STYLES --- */
 .modal {
-    display: none; position: fixed; z-index: 1000; left: 0; top: 0;
-    width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85);
-    align-items: center; justify-content: center; backdrop-filter: blur(8px);
+    display: none; /* Initially Hidden */
+    position: fixed;
+    z-index: 100;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
-    width: 85%; max-width: 380px; position: relative;
-    padding: 30px; text-align: center;
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    width: 85%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
-.close-btn-top {
-    position: absolute; right: 20px; top: 15px;
-    font-size: 1.5rem; color: var(--accent); cursor: pointer;
+.close-button {
+    position: absolute;
+    right: 15px; top: 10px;
+    font-size: 24px; cursor: pointer; color: #888;
 }
 
-/* Buttons & Inputs */
-.premium-icon-btn {
-    background: var(--glass); border: 1px solid var(--glass-border);
-    color: white; width: 38px; height: 38px; border-radius: 10px; cursor: pointer; transition: 0.3s;
-}
-
-.premium-icon-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent); }
-
-.glass-card {
-    background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border);
-    border-radius: 20px;
-}
-
-.action-btn {
-    margin-top: 20px; padding: 10px 25px; background: var(--accent);
-    border: none; border-radius: 10px; font-weight: bold; cursor: pointer;
-}
-
-/* Chat Messages */
-#chat-window { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; }
-
-.message {
-    max-width: 80%; padding: 10px 14px; border-radius: 15px;
-    font-size: 0.9rem; animation: fadeIn 0.4s ease;
-}
-
-.my-message { align-self: flex-end; background: linear-gradient(135deg, #00b0ff, #0081cb); color: white; border-bottom-right-radius: 2px; }
-.other-message { align-self: flex-start; background: rgba(255, 255, 255, 0.07); border: 1px solid var(--glass-border); border-bottom-left-radius: 2px; }
-
-.message-input-area { padding: 15px; background: rgba(0, 0, 0, 0.3); display: flex; gap: 10px; }
-#msgInput { flex: 1; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px; color: white; outline: none; }
-#sendBtn { background: var(--accent); color: black; width: 45px; border-radius: 12px; border: none; cursor: pointer; }
+.contact-section ul { list-style: none; padding: 0; text-align: left; }
+.contact-section li { margin-bottom: 10px; }
