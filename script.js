@@ -19,19 +19,18 @@ window.joinRoom = function() {
     myName = document.getElementById('usernameInput').value.trim();
     currentRoom = document.getElementById('roomInput').value.trim();
 
-    if(!myName || !currentRoom) return alert("System access denied.");
+    if(!myName || !currentRoom) return alert("Credentials required.");
 
-    // Hide Login and Lower Info space
+    // UI Switching
     document.getElementById('room-info').style.display = 'none';
     document.getElementById('extra-info').style.display = 'none';
-    
-    // Show Chat Interface
     document.getElementById('chat-interface').style.display = 'flex';
     document.querySelector('#roomTitle span').innerText = currentRoom;
 
     document.getElementById('msgInput').disabled = false;
     document.getElementById('sendBtn').disabled = false;
 
+    // Load Messages
     db.ref(`chat_rooms/${currentRoom}`).on('child_added', snap => {
         const d = snap.val();
         displayMessage(d.text, d.senderID, d.senderName, d.timestamp);
@@ -44,23 +43,35 @@ function displayMessage(text, id, name, time) {
     div.className = `message ${id === myID ? 'my-message' : 'other-message'}`;
     const t = new Date(time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 
-    div.innerHTML = `<span style="font-size:0.65rem; color:var(--accent); font-weight:bold;">${id===myID?'YOU':name}</span>
+    div.innerHTML = `<span class="sender-name">${id===myID?'YOU':name}</span>
                      <div>${text}</div>
-                     <span style="font-size:0.55rem; opacity:0.5; text-align:right; display:block; margin-top:4px;">${t}</span>`;
+                     <span class="timestamp">${t}</span>`;
     win.appendChild(div);
     win.scrollTop = win.scrollHeight;
 }
 
 window.sendMessage = function() {
     const input = document.getElementById('msgInput');
-    if(!input.value.trim()) return;
+    const msg = input.value.trim();
+    if(!msg) return;
+
     db.ref(`chat_rooms/${currentRoom}`).push({
-        text: input.value, senderID: myID, senderName: myName, timestamp: Date.now()
+        text: msg,
+        senderID: myID,
+        senderName: myName,
+        timestamp: Date.now()
     });
     input.value = "";
 };
 
-// Modal Logic
+// --- ENTER KEY LOGIC ---
+document.getElementById('msgInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+});
+
+// Modal Toggles
 window.toggleAbout = () => {
     const m = document.getElementById('aboutModal');
     m.style.display = (m.style.display === "flex") ? "none" : "flex";
@@ -69,5 +80,3 @@ window.toggleContact = () => {
     const m = document.getElementById('contactModal');
     m.style.display = (m.style.display === "flex") ? "none" : "flex";
 };
-
-document.getElementById('msgInput').addEventListener('keypress', (e) => { if(e.key==='Enter') sendMessage(); });
