@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OSPranto Tech Chat</title> 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="ospranto.ico"> 
@@ -18,18 +18,18 @@
                 <small class="tagline">Technology with a Sense of Ease</small>
             </div>
             <div id="header-btns"> 
-                <button id="themeToggle" class="theme-btn"><i class="fas fa-moon"></i></button>
+                <button id="themeToggle" class="icon-btn"><i class="fas fa-moon"></i></button>
                 <button class="nav-btn" onclick="toggleAbout()">About</button> 
                 <button class="nav-btn highlight" onclick="toggleContact()">Contact</button>
             </div>
         </header>
         
         <div id="room-info" class="join-panel">
-            <div class="input-box">
+            <div class="input-group">
                 <i class="fas fa-user"></i>
                 <input type="text" id="usernameInput" placeholder="Your Name" required /> 
             </div>
-            <div class="input-box">
+            <div class="input-group">
                 <i class="fas fa-hashtag"></i>
                 <input type="text" id="roomInput" placeholder="Room Name" required />
             </div>
@@ -39,10 +39,11 @@
         <div id="chat-interface" style="display: none;">
             <div class="chat-status">
                 <h3 id="roomTitle"></h3>
-                <span class="user-badge"><i class="fas fa-users"></i> <span id="userCount">0</span> Online</span>
+                <span class="user-badge"><i class="fas fa-circle"></i> <span id="userCount">0</span> Online</span>
             </div>
-            <div id="chat-window"></div>
-            <div class="message-input-bar">
+            <div id="chat-window">
+                </div>
+            <div class="message-bar">
                 <input type="text" id="msgInput" placeholder="Write a message..." disabled>
                 <button id="sendBtn" disabled><i class="fas fa-paper-plane"></i></button>
             </div>
@@ -52,16 +53,15 @@
     <div id="aboutModal" class="modal" onclick="toggleAbout()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="close" onclick="toggleAbout()">&times;</span>
-            <h3>About This Application</h3>
-            <p>Welcome to **OSPranto Tech's** Real-time Chat App. This project uses Firebase for instant messaging.</p>
-            <div class="footer-branding">Powered by **OSPranto Tech**</div>
+            <h3>About Application</h3>
+            <p>Firebase Realtime Database ব্যবহার করে তৈরি একটি আধুনিক চ্যাট সিস্টেম ।</p>
         </div>
     </div>
     
     <div id="contactModal" class="modal" onclick="toggleContact()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="close" onclick="toggleContact()">&times;</span>
-            <h3>Connect with Adnan Hasan Pranto</h3>
+            <h3>Contact Developer</h3>
             <div class="social-links">
                 <a href="https://www.facebook.com/AdnanHasanPranto" target="_blank" class="fb"><i class="fab fa-facebook"></i> Facebook</a>
                 <a href="mailto:OSPranto.Official@gmail.com" class="mail"><i class="fas fa-envelope"></i> Email</a>
